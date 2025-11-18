@@ -29,7 +29,7 @@ env:
   DEFCONFIG_ORIGIN_IMAGE: ""
   DEFCONFIG_FROM_BOOT: false
 
-  KERNELSU_SOURCE : "https://github.com/soulspark666/SukiSU-Ultra.git"
+  KERNELSU_SOURCE : "https://github.com/SukiSU-Ultra/SukiSU-Ultra.git"
   KERNELSU_BRANCH : "susfs-main"
   KERNELSU_NAME : "KernelSU"
 
