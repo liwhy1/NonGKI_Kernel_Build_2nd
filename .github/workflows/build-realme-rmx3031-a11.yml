@@ -10,7 +10,7 @@ env:
   DEVICE_CODENAME : "RMX3031"
 
   CUSTOM_CMDS : "CLANG_TRIPLE=aarch64-linux-gnu-"
-  EXTRA_CMDS : "LD=ld.lld"
+  EXTRA_CMDS : "LD=ld.lld LLVM=1 LLVM_IAS=1"
 
   KERNEL_SOURCE : "https://github.com/liwhy1/kernel_realme_RMX3031.git"
   KERNEL_BRANCH : "sukisu-susfs"  # TODO: Confirm if this is the correct branch
@@ -69,7 +69,7 @@ env:
   BASEBAND_GUARD_ENABLE: "false" #if u want prevent unauthorized writes to critical partitions/device nodes.
   BASEBAND_GUARD_BOOT: "false" #if u want to protect boot partition.
 
-  HOOK_METHOD: "normal"
+  HOOK_METHOD: "tracepoint"
   HOOK_OLDER: "false" # contain backport older patch and syscall older patch.
 
   KPM_ENABLE: "false"
@@ -81,7 +81,7 @@ env:
   GENERATE_DTB: "false"
   GENERATE_CHIP: "mediatek"
 
-  BUILD_DEBUGGER: "true"  # Enable for debugging
+  BUILD_DEBUGGER: "false"  # Enable for debugging
   SKIP_PATCH: "false"
 
   BUILD_OTHER_CONFIG: "false"  # Can enable if additional configs needed
