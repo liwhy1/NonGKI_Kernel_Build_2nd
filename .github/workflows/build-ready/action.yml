@@ -256,8 +256,8 @@ runs:
           cd $GITHUB_WORKSPACE/device_kernel
 
           # Clean Hook
-          cp /tmp/Bin/clean_hook.sh ./
-          bash clean_hook.sh
+          # cp /tmp/Bin/clean_hook.sh ./
+          # bash clean_hook.sh
 
       - name: KPM Function Support
         if: env.KPM_ENABLE == 'true'
