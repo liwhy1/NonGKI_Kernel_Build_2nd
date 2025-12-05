@@ -10,10 +10,10 @@ env:
   DEVICE_CODENAME : "RMX3031"
 
   CUSTOM_CMDS : "CLANG_TRIPLE=aarch64-linux-gnu-"
-  EXTRA_CMDS : "LD=ld.lld LLVM=1 LLVM_IAS=1"
+  EXTRA_CMDS : "LLVM=1 LLVM_IAS=1"
 
   KERNEL_SOURCE : "https://github.com/liwhy1/kernel_realme_RMX3031.git"
-  KERNEL_BRANCH : "sukisu-susfs"  # TODO: Confirm if this is the correct branch
+  KERNEL_BRANCH : "sukisu-susfs"
 
   CLANG_SOURCE : https://gitlab.com/LeCmnGend/clang.git
   CLANG_BRANCH : clang-17
@@ -30,10 +30,10 @@ env:
   DEFCONFIG_FROM_BOOT: false
 
   KERNELSU_SOURCE : "https://github.com/SukiSU-Ultra/SukiSU-Ultra.git"
-  KERNELSU_BRANCH : "susfs-main"
-  KERNELSU_NAME : "KernelSU"
+  KERNELSU_BRANCH : "builtin"
 
   KERNELSU_AUTO_GET : "false"
+  KERNELSU_AUTO_FORK : "sukisu" # magic, rsuntk , next and sukisu
 
   SUSFS_ENABLE : false
   SUSFS_FIXED : false
@@ -50,49 +50,49 @@ env:
   ROM_TEXT : "realme_ui_a11"
 
   # Other env
-  PYTHON_VERSION: "3"
+  PYTHON_VERSION: "3"  # Only 2(Ubuntu 22.04 and Ubuntu 20.04) or 3(Any OS Versions).
 
-  PACK_METHOD: "Anykernel3"
+  PACK_METHOD: "Anykernel3"  # Anykernel3 need SOURCE and BRANCH, MKBOOTIMG needn't it.
 
-  KERNELSU_METHOD: "manual"  # Patches already applied, just clone KernelSU
-  KERNELSU_SUS_PATCH: "false"
+  KERNELSU_METHOD: "manual" # shell, manual and only.
 
-  PATCHES_SOURCE: ""
-  PATCHES_BRANCH: ""
+  PATCHES_SOURCE: "" # [your_name]/[your_patch] -> gooder123/NonGKI_Patcher
+  PATCHES_BRANCH: "" # [your_branch] -> main
 
-  SUSFS_FOLDER_FIXED: ""
-  SUSFS_155_FIXED: ""
-  SUSFS_LATEST_FIXED: ""
+  SUSFS_FOLDER_FIXED: "" # Fill in your patch prefix directory here. Leave it blank if there isn't one. -> your_folder
+  SUSFS_155_FIXED: "" # Fill in your patches here. If there are multiple patches, please separate them with a comma. Leave it blank if there isn't one. -> patch1,patch2 (Only v1.5.5 SuSFS)
+  SUSFS_151X_FIXED: "" # Fill in your patches here. If there are multiple patches, please separate them with a comma. Leave it blank if there isn't one. -> patch1,patch2 (Only v1.5.1X SuSFS)
+  SUSFS_LATEST_FIXED: "" # Fill in your patches here. If there are multiple patches, please separate them with a comma. Leave it blank if there isn't one. -> patch1,patch2
 
   REKERNEL_ENABLE: "false" # if u need Re:Kernel.
+
+  HOOK_METHOD: "tracepoint" # Manual hook method ->  syscall and tracepoint.
+  HOOK_OLDER: "false" # contain backport older patch and syscall older patch.
+
+  KPM_ENABLE: "false" # Only use it for SukiSU-Ultra.
+  KPM_PATCH_SOURCE: "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU_patch/refs/heads/main/kpm/patch_linux" # patch exec file source -> raw.githubusercontent.com/Test/Test/patch .
 
   BASEBAND_GUARD_ENABLE: "false" #if u want prevent unauthorized writes to critical partitions/device nodes.
   BASEBAND_GUARD_BOOT: "false" #if u want to protect boot partition.
 
-  HOOK_METHOD: "tracepoint"
-  HOOK_OLDER: "false" # contain backport older patch and syscall older patch.
+  HIDE_STUFF: "false" # hide some of the feat
 
-  KPM_ENABLE: "false"
-  KPM_FIX: "false"  # Important for stability
-  KPM_PATCH_SOURCE: "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU_patch/refs/heads/main/kpm/patch_linux"
+  GENERATE_DTB: "false" # if u kernel need DTB , but cannot auto generate it. (Only Anykernel3).
+  GENERATE_CHIP: "mediatek" # only supported for qcom and mediatek
 
-  HIDE_STUFF: "false" # hide some of the features
+  BUILD_DEBUGGER: "false" # Output build errors.
+  SKIP_PATCH: "false" # Ignore errors found in Patch Debugger.
 
-  GENERATE_DTB: "false"
-  GENERATE_CHIP: "mediatek"
-
-  BUILD_DEBUGGER: "false"  # Enable for debugging
-  SKIP_PATCH: "false"
-
-  BUILD_OTHER_CONFIG: "false"  # Can enable if additional configs needed
+  BUILD_OTHER_CONFIG: "false" # Merge config files.
   MERGE_CONFIG_FILES: ""
 
-  FREE_MORE_SPACE: "false"
+  FREE_MORE_SPACE: "false" # if u want get more space, enabled it.
 
 jobs:
   build-kernel:
     name: Realme RMX3031 (SukiSU-Ultra)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # u can changed to ubuntu 22.04, and need container set ubuntu-latest
+    # container: archlinux/archlinux:latest # if u need use arch linux -> archlinux/archlinux:latest or ubuntu 20.04 -> ubuntu:focal
     env:
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
       CCACHE_NOHASHDIR: "true"
@@ -107,27 +107,6 @@ jobs:
 
       - name: ⚙️ Get neccssary tools
         uses: ./.github/workflows/build-ready
-
-      - name: 🪝 Patch Kernel of SUSFS
-        uses: ./.github/workflows/patch-susfs
-
-      - name: 🔗 Patch for no-kprobe
-        uses: ./.github/workflows/patch-no-kprobe
-
-      - name: 🪛 Extra Kernel Options
-        run: |
-          # Only ${{ env.DEVICE_NAME }} use it.
-          cd $GITHUB_WORKSPACE/device_kernel
-          # Nothing
-
-      - name: 🧰 Patch Kernel of Re:Kernel
-        uses: ./.github/workflows/patch-rekernel
-
-      - name: 🔒 Patch Kernel of Baseband Guard
-        uses: ./.github/workflows/patch-baseband-guard
-
-      - name: 🔧 Patch Hide Stuff
-        uses: ./.github/workflows/patch-hide-stuff
 
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
